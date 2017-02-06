@@ -1,0 +1,66 @@
+name = 'The Blue House, Korea'
+
+version = '1'
+
+author = 'kmsi'
+
+description = "Korean President's House, Cheongwadae"
+
+protected = ['B2', 'C2', 'D2', 'E2', 'F2', 'G2', 'B3', 'B4', 'B5', 'B6', 'C6', 'D6', 'E6', 'F6', 'G6', 'G3', 'G4', 'G5']
+
+
+
+
+
+#script
+
+from pyspades.constants import *
+
+from pyspades.server import ServerConnection
+
+import random
+
+def get_entity_location(team, entity_id):
+
+
+
+    if entity_id == BLUE_FLAG:
+
+        return (232, 147, 50)
+
+    if entity_id == GREEN_FLAG:
+
+        return (287, 359, 50)
+
+    if entity_id == BLUE_BASE:
+
+        return (279, 147, 50)
+
+    if entity_id == GREEN_BASE:
+
+        return (224, 359, 50)
+
+
+
+spawn_locations_blue = [
+                       (293, 147, 53), 
+                       (218, 147, 53)
+]
+spawn_locations_green = [
+                       (310, 359, 53), 
+                       (201, 359, 53)
+]
+
+def get_spawn_location(connection):
+    if connection.team is connection.protocol.blue_team:
+        x, y, z = random.choice(spawn_locations_blue)
+    elif connection.team is connection.protocol.green_team:
+        x, y, z = random.choice(spawn_locations_green)
+    z -= 2.4 # magic numbers
+    x += 0.5
+    y += 0.5
+    if connection.protocol.map.get_z(x, y) <= z:
+        # allows spawning lower if the ground is destroyed
+        return x, y, z
+    else:
+        return x, y, connection.protocol.map.get_z(x, y)

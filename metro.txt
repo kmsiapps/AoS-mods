@@ -1,0 +1,63 @@
+name = 'SeoulMetro'
+
+version = '1'
+
+author = 'kmsi'
+
+description = 'Simple Metro Map. Enjoy!'
+
+protected = ['G3', 'G4', 'G5', 'G6', 'B3', 'B4', 'B5', 'B6', 'C6', 'D6', 'E6', 'F6', 'A3', 'C3', 'D3', 'E3', 'F3']
+
+
+#script
+
+from pyspades.constants import *
+
+from pyspades.server import ServerConnection
+
+import random
+
+def get_entity_location(team, entity_id):
+
+
+
+    if entity_id == BLUE_FLAG:
+
+        return (387, 220, 39)
+
+    if entity_id == GREEN_FLAG:
+
+        return (124, 220, 39)
+
+    if entity_id == BLUE_BASE:
+
+        return (387, 291, 39)
+
+    if entity_id == GREEN_BASE:
+
+        return (124, 291, 39)
+
+
+
+spawn_locations_blue = [
+                       (403, 265, 32), 
+                       (403, 246, 32)
+]
+spawn_locations_green = [
+                       (108, 265, 32), 
+                       (108, 246, 32)
+]
+
+def get_spawn_location(connection):
+    if connection.team is connection.protocol.blue_team:
+        x, y, z = random.choice(spawn_locations_blue)
+    elif connection.team is connection.protocol.green_team:
+        x, y, z = random.choice(spawn_locations_green)
+    z -= 0 # magic numbers
+    x += 0
+    y += 0
+    if connection.protocol.map.get_z(x, y) <= z:
+        # allows spawning lower if the ground is destroyed
+        return x, y, z
+    else:
+        return x, y, connection.protocol.map.get_z(x, y)

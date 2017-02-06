@@ -1,0 +1,83 @@
+name = 'Cheonggyecheon Stream'
+
+version = '1'
+
+author = 'kmsi'
+
+description = 'Based on real stream in Seoul, Korea. Enjoy!'
+
+extensions = {
+'boundary_damage' :
+    {
+        'left' : 140,
+        'right' : 371,
+        'top' : 221,
+        'bottom' : 277,
+        'damage' : 30
+    }
+}
+
+#script
+
+from pyspades.constants import *
+
+from pyspades.server import ServerConnection
+
+import random
+
+def get_entity_location(team, entity_id):
+
+    if entity_id == BLUE_FLAG:
+
+        return (143, 236, 60)
+
+    if entity_id == GREEN_FLAG:
+
+        return (369, 236, 60)
+
+    if entity_id == BLUE_BASE:
+
+        return (143, 262, 60)
+
+    if entity_id == GREEN_BASE:
+
+        return (369, 262, 60)
+
+
+spawn_locations_blue = [
+                       (143, 265, 60), 
+                       (143, 233, 60)
+]
+spawn_locations_green = [
+                       (369, 265, 60), 
+                       (369, 233, 60)
+]
+
+def get_spawn_location(connection):
+    if connection.team is connection.protocol.blue_team:
+        x, y, z = random.choice(spawn_locations_blue)
+    elif connection.team is connection.protocol.green_team:
+        x, y, z = random.choice(spawn_locations_green)
+    z -= 0 # magic numbers
+    x += 0
+    y += 0
+    if connection.protocol.map.get_z(x, y) <= z:
+        # allows spawning lower if the ground is destroyed
+        return x, y, z
+    else:
+        return x, y, connection.protocol.map.get_z(x, y)
+
+global protected_x, protected_y
+
+protected_x=[140,371]
+protected_y=[221,277]
+# protects specific x, y coordinate from building
+# by kmsi(kmsiapps@gmail.com)
+        
+def on_block_destroy(self, x, y, z, mode):
+    if (x==protected_x[0]) or (x==protected_x[1]) or (y==protected_y[0]) or (y==protected_y[1]):
+        return False
+        
+def on_block_build_attempt(self, x, y, z):
+    if (x==protected_x[0]) or (x==protected_x[1]) or (y==protected_y[0]) or (y==protected_y[1]):
+        return False
