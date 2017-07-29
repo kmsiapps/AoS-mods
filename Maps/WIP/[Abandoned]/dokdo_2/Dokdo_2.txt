@@ -1,0 +1,57 @@
+name = 'Dokdo, Korea[2]'
+version = '2'
+author = 'kmsi'
+description = ('with TSM')
+
+# script
+
+from pyspades.constants import *
+
+from pyspades.server import ServerConnection
+
+import random
+
+def get_entity_location(team, entity_id):
+
+
+    if entity_id == GREEN_FLAG:
+
+        return (420, 259, 56)
+
+    if entity_id == BLUE_FLAG:
+
+        return (160, 213, 56)
+
+    if entity_id == GREEN_BASE:
+
+        return (425, 261, 57)
+
+    if entity_id == BLUE_BASE:
+
+        return (155, 216, 57)
+
+
+
+spawn_locations_blue = [
+     (170, 219, 54),
+     (190, 226, 54)
+]
+
+spawn_locations_green = [
+     (408, 257, 54),
+     (399, 236, 53)
+]
+
+def get_spawn_location(connection):
+    if connection.team is connection.protocol.blue_team:
+        x, y, z = random.choice(spawn_locations_blue)
+    elif connection.team is connection.protocol.green_team:
+        x, y, z = random.choice(spawn_locations_green)
+    z -= 2.4 # magic numbers
+    x += 0.5
+    y += 0.5
+    if connection.protocol.map.get_z(x, y) <= z:
+        # allows spawning lower if the ground is destroyed
+        return x, y, z
+    else:
+        return x, y, connection.protocol.map.get_z(x, y)

@@ -1,0 +1,63 @@
+name = 'Ieodo, Korea'
+
+version = '0.1'
+
+author = 'kmsi, Aeigis'
+
+description = 'Thanks to Ilrak :)'
+
+protected = ['C5', 'D5', 'E5', 'F5', 'B4', 'C4', 'D4', 'E4', 'F4', 'E3']
+
+
+# script
+
+from pyspades.constants import *
+
+from pyspades.server import ServerConnection
+
+import random
+
+def get_entity_location(team, entity_id):
+
+
+    if entity_id == GREEN_FLAG:
+
+        return (239, 251, 5)
+
+    if entity_id == BLUE_FLAG:
+
+        return (239, 245, 5)
+
+    if entity_id == GREEN_BASE:
+
+        return (174, 293, 55)
+
+    if entity_id == BLUE_BASE:
+
+        return (353, 294, 55)
+
+
+
+spawn_locations_blue = [
+     (353, 282, 56),
+     (355, 280, 63)
+]
+
+spawn_locations_green = [
+     (173, 282, 56),
+     (175, 285, 63)
+]
+
+def get_spawn_location(connection):
+    if connection.team is connection.protocol.blue_team:
+        x, y, z = random.choice(spawn_locations_blue)
+    elif connection.team is connection.protocol.green_team:
+        x, y, z = random.choice(spawn_locations_green)
+    z -= 2.4 # magic numbers
+    x += 0.5
+    y += 0.5
+    if connection.protocol.map.get_z(x, y) <= z:
+        # allows spawning lower if the ground is destroyed
+        return x, y, z
+    else:
+        return x, y, connection.protocol.map.get_z(x, y)
